@@ -3,6 +3,7 @@ let latitude;
 let longitude;
 let searchHistory = [];
 
+
 // Function to convert wind degrees to Cardinal directions.
 function parseWind(windDeg) {
     if (windDeg < 22.5) {return "N"}
@@ -76,6 +77,7 @@ function searchLoc() {
         // Current day variables for display.
         $("#conditionsContainer").remove();
         $("#fiveDayContainer").remove();
+        let currentTime = dayjs.unix(data.current.dt).format('ddd, MMM D, YYYY h:mm A');
         let currentTemp = data.current.temp;
         let currentWind = data.current.wind_speed;
         let windDirection = parseWind(data.current.wind_deg);
@@ -84,7 +86,7 @@ function searchLoc() {
         let current = $("#currentConditions");
         current.append(`<div id="conditionsContainer"></div>`);
         current = $("#conditionsContainer");
-        current.append(`<h2>Current weather conditions for ${searchCity.toUpperCase()}</h2>`);
+        current.append(`<h2>Current weather conditions for:<br>${searchCity.toUpperCase()} - ${currentTime}</h2><img src="http://openweathermap.org/img/wn/${data.current.weather[0].icon}@2x.png" alt="${data.current.weather[0].description}"><br>`);
         current.append(`<span>Temperature: ${currentTemp}&deg</span><br>`);
         current.append(`<span>Winds: ${currentWind}MPH out of the ${windDirection}</span><br>`);
         current.append(`<span>Humidity: ${currentHumidity}%</span><br>`);
@@ -104,7 +106,7 @@ function searchLoc() {
             fiveDay.append(`<div id="day${i}" class="day"></div>`);
             let dayContainer = $(`#day${i}`)
             let dateString = dayjs.unix(data.daily[i].dt).format('MM/DD/YYYY');
-            dayContainer.append(`<span>${dateString}</span><br>`);
+            dayContainer.append(`<h4>${dateString}</span><h4><img src="http://openweathermap.org/img/wn/${data.daily[i].weather[0].icon}.png" alt="${data.daily[i].weather[0].description}">`);
             dayContainer.append(`<span>${data.daily[i].weather[0].description}</span><br>`);
             dayContainer.append(`<span>Temperature (High/Low): ${data.daily[i].temp.max}&deg/${data.daily[i].temp.min}&deg</span><br>`);
             dayContainer.append(`<span>Winds: ${data.daily[i].wind_speed}MPH</span><br>`);
