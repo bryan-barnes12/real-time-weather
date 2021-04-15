@@ -28,7 +28,7 @@ function searchLoc() {
     fetch(searchVar)
     .then(function (response) {return response.json();})
     .then(function (data) {
-//      console.log(data);
+      console.log(data);
       latitude = data.coord.lat;
       longitude = data.coord.lon;
       let searchCoords = "https://api.openweathermap.org/data/2.5/onecall?lat=" + latitude + "&lon=" + longitude + "&units=imperial&appid=ecb2b034bde3b7f00daa738ddf58f8c4";
@@ -37,6 +37,7 @@ function searchLoc() {
       .then(function (response) {return response.json();})
       .then(function (data) {
         // Current day variables for display.
+        console.log(data);
         let currentTemp = data.current.temp;
         let currentWind = data.current.wind_speed;
         let windDirection = parseWind(data.current.wind_deg);
@@ -75,5 +76,8 @@ function searchLoc() {
     //     console.log(data);
     //   });
 }
-$('#searchButton').on('click', searchLoc);
+$('#searchButton').on('click', function (event) {
+    event.preventDefault();
+    searchLoc();}
+    );
   
