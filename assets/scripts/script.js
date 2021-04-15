@@ -1,8 +1,32 @@
 let searchCity = "";
-let searchParameter = "";
 let latitude;
 let longitude;
-let testObject = {};
+let searchHistory = [];
+
+function retrieveHistory() {
+    console.log("00000000000000000RUNNINGAGAIN")
+    if (!localStorage.getItem('cities')) {
+        localStorage.setItem('cities', JSON.stringify(searchHistory));
+    } else {
+        searchHistory = JSON.parse(localStorage.getItem('cities'));
+    }
+}
+
+function initializeButtons() {
+    retrieveHistory();
+    for (let i = 0; i < searchHistory.length; i++) {
+        let historyArea = $("#history")
+        historyArea.append(`<button class="cityHistory" data-value="${searchHistory[i]}">${searchHistory[i]}</button>`)
+    }
+    $('.cityHistory').on('click', function (event) {
+        event.preventDefault();
+        let oldCity = $(event.target).attr('data-value');
+        $("#searchInput").val(oldCity);
+        searchLoc();
+        }
+        );
+}
+initializeButtons();
 
 // Function to convert wind degrees to Cardinal directions.
 function parseWind(windDeg) {
@@ -17,14 +41,29 @@ function parseWind(windDeg) {
     if (337.5 <= windDeg) {return "N"}
 }
 
-let resultsDiv = document.getElementById("resultsDiv");
+function expandHistory(searchCity) {
+    let duplicate = false;
+    for (let i = 0; i < searchHistory.length; i++) {
+        if (searchCity == searchHistory[i]) {
+            duplicate = true;
+        }
+    }
+    if (!duplicate) {
+        let historyArea = $("#history")
+        historyArea.append(`<button class="cityHistory" data-value="${searchCity}">${searchCity}</button>`)
+        searchHistory.push(searchCity);
+        localStorage.setItem('cities', JSON.stringify(searchHistory));
+    }
+
+}
 
 function searchLoc() {
     let searchVar;
     searchCity = $("#searchInput").val();
-//    console.log(searchCity);
+    expandHistory(searchCity);
+    console.log(searchCity);
     searchVar = "http://api.openweathermap.org/data/2.5/weather?q=" + searchCity + "&units=imperial&appid=ecb2b034bde3b7f00daa738ddf58f8c4";
-//    console.log(searchVar);
+   console.log(searchVar);
     fetch(searchVar)
     .then(function (response) {return response.json();})
     .then(function (data) {
@@ -32,7 +71,6 @@ function searchLoc() {
       latitude = data.coord.lat;
       longitude = data.coord.lon;
       let searchCoords = "https://api.openweathermap.org/data/2.5/onecall?lat=" + latitude + "&lon=" + longitude + "&units=imperial&appid=ecb2b034bde3b7f00daa738ddf58f8c4";
-//      console.log(searchCoords);
       fetch(searchCoords)
       .then(function (response) {return response.json();})
       .then(function (data) {
@@ -43,6 +81,11 @@ function searchLoc() {
         let windDirection = parseWind(data.current.wind_deg);
         let currentHumidity = data.current.humidity;
         let currentUv = data.current.uvi;
+        let current = $("#currentConditions");
+        current.append(`<h2>${currentTemp}</h2>`)
+        current.append(`<h2>${currentWind}MPH out of the ${windDirection}</h2>`)
+        current.append(`<h2>${currentHumidity}</h2>`)
+        current.append(`<h2>${currentUv}</h2>`)
         console.log("Current temp: " + currentTemp);
         console.log(currentWind + "MPH out of the " + windDirection);
         console.log(currentHumidity);
@@ -55,26 +98,10 @@ function searchLoc() {
             console.log(data.daily[i].temp);
             console.log(data.daily[i].wind_speed + parseWind(data.daily[0].wind_deg));
             console.log(data.daily[i].humidity);
+            console.log("--------------------------------");
         }
     })
     })
-    //.then(function (data) {fetch(searchCoords);})
-    //   .then(function (data1) {
-    //     console.log(data1);
-    //   })  
-    //   );
-    //   console.log(data.coord.lat);
-    //   console.log(longitude);
-
-      // searchVar = "https://api.openweathermap.org/data/2.5/onecall?lat=" + latitude + "&lon=" + longitude + "&units=imperial&appid=d031f7d8412c7fab27c346dc9d664ac2"
-    // console.log(searchVar);
-    // fetch(searchVar)
-    //   .then(function (response) {
-    //     return response.json();
-    //   })
-    //   .then(function (data) {
-    //     console.log(data);
-    //   });
 }
 $('#searchButton').on('click', function (event) {
     event.preventDefault();

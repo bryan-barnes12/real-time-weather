@@ -9,13 +9,17 @@
     <link rel="stylesheet" href="./assets/style/style.css">
 </head>
 <body>
-    <div class="container">
-    <form id="citySearch">
-        <input id="searchInput" type="search" value="topeka"/>
-        <button id="searchButton">Search</button>
-    </form>
-    </div>
-    <div id="resultsDiv"></div>
+    <section id="searchArea">
+        <form id="citySearch">
+            <input id="searchInput" type="search"/>
+            <button id="searchButton">Search</button>
+        </form>
+        <section id="history"></section>
+    </section>
+    <section id="resultsDiv">
+        <section id="currentConditions"></section>
+        <section id="fiveDay"></section>
+    </section>
 
 
 <script src="https://unpkg.com/dayjs@1.8.21/dayjs.min.js"></script>
