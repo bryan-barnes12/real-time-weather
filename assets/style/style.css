@@ -17,3 +17,6 @@ body {
     align-items: center;
 }
 
+.day {
+    border: 1px solid black;
+}

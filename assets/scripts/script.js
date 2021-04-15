@@ -3,8 +3,20 @@ let latitude;
 let longitude;
 let searchHistory = [];
 
+// Function to convert wind degrees to Cardinal directions.
+function parseWind(windDeg) {
+    if (windDeg < 22.5) {return "N"}
+    if (22.5 <= windDeg < 67.5) {return "NE"}
+    if (67.5 <= windDeg < 112.5) {return "E"}
+    if (112.5 <= windDeg < 157.5) {return "SE"}
+    if (157.5 <= windDeg < 202.5) {return "S"}
+    if (202.5 <= windDeg < 247.5) {return "SW"}
+    if (247.5 <= windDeg < 292.5) {return "W"}
+    if (292.5 <= windDeg < 337.5) {return "NW"}
+    if (337.5 <= windDeg) {return "N"}
+}
+
 function retrieveHistory() {
-    console.log("00000000000000000RUNNINGAGAIN")
     if (!localStorage.getItem('cities')) {
         localStorage.setItem('cities', JSON.stringify(searchHistory));
     } else {
@@ -27,19 +39,6 @@ function initializeButtons() {
         );
 }
 initializeButtons();
-
-// Function to convert wind degrees to Cardinal directions.
-function parseWind(windDeg) {
-    if (windDeg < 22.5) {return "N"}
-    if (22.5 <= windDeg < 67.5) {return "NE"}
-    if (67.5 <= windDeg < 112.5) {return "E"}
-    if (112.5 <= windDeg < 157.5) {return "SE"}
-    if (157.5 <= windDeg < 202.5) {return "S"}
-    if (202.5 <= windDeg < 247.5) {return "SW"}
-    if (247.5 <= windDeg < 292.5) {return "W"}
-    if (292.5 <= windDeg < 337.5) {return "NW"}
-    if (337.5 <= windDeg) {return "N"}
-}
 
 function expandHistory(searchCity) {
     let duplicate = false;
@@ -75,30 +74,47 @@ function searchLoc() {
       .then(function (response) {return response.json();})
       .then(function (data) {
         // Current day variables for display.
-        console.log(data);
+        $("#conditionsContainer").remove();
+        $("#fiveDayContainer").remove();
         let currentTemp = data.current.temp;
         let currentWind = data.current.wind_speed;
         let windDirection = parseWind(data.current.wind_deg);
         let currentHumidity = data.current.humidity;
         let currentUv = data.current.uvi;
         let current = $("#currentConditions");
-        current.append(`<h2>${currentTemp}</h2>`)
-        current.append(`<h2>${currentWind}MPH out of the ${windDirection}</h2>`)
-        current.append(`<h2>${currentHumidity}</h2>`)
-        current.append(`<h2>${currentUv}</h2>`)
-        console.log("Current temp: " + currentTemp);
-        console.log(currentWind + "MPH out of the " + windDirection);
-        console.log(currentHumidity);
-        console.log(currentUv);
+        current.append(`<div id="conditionsContainer"></div>`);
+        current = $("#conditionsContainer");
+        current.append(`<h2>Current weather conditions for ${searchCity.toUpperCase()}</h2>`);
+        current.append(`<span>Temperature: ${currentTemp}&deg</span><br>`);
+        current.append(`<span>Winds: ${currentWind}MPH out of the ${windDirection}</span><br>`);
+        current.append(`<span>Humidity: ${currentHumidity}%</span><br>`);
+        current.append(`<span>U/V Index: ${currentUv}</span>`);
+        // console.log("Current temp: " + currentTemp);
+        // console.log(currentWind + "MPH out of the " + windDirection);
+        // console.log(currentHumidity);
+        // console.log(currentUv);
         // Five day forecast variables for display.
-        console.log("----------------5-day Forecast----------------");
-        for (let i = 0; i < 5; i++) {
-            console.log(data.daily[i].dt);
-            console.log(data.daily[i].weather[0].description);
-            console.log(data.daily[i].temp);
-            console.log(data.daily[i].wind_speed + parseWind(data.daily[0].wind_deg));
-            console.log(data.daily[i].humidity);
-            console.log("--------------------------------");
+        // console.log("----------------5-day Forecast----------------");
+        let fiveDay = $("#fiveDay");
+        fiveDay.append('<div id="fiveDayContainer"></div>');
+        fiveDay = $("#fiveDayContainer");
+        fiveDay.append("<h3>Five-Day Outlook</h3>");
+        console.log(data);
+        for (let i = 1; i < 6; i++) {
+            fiveDay.append(`<div id="day${i}" class="day"></div>`);
+            let dayContainer = $(`#day${i}`)
+            let dateString = dayjs.unix(data.daily[i].dt).format('MM/DD/YYYY');
+            dayContainer.append(`<span>${dateString}</span><br>`);
+            dayContainer.append(`<span>${data.daily[i].weather[0].description}</span><br>`);
+            dayContainer.append(`<span>Temperature (High/Low): ${data.daily[i].temp.max}&deg/${data.daily[i].temp.min}&deg</span><br>`);
+            dayContainer.append(`<span>Winds: ${data.daily[i].wind_speed}MPH</span><br>`);
+            dayContainer.append(`<span>Humidity: ${data.daily[i].humidity}%</span>`);
+            // console.log(data.daily[i].dt);
+            // console.log(data.daily[i].weather[0].description);
+            // console.log(data.daily[i].temp);
+            // console.log(data.daily[i].wind_speed + parseWind(data.daily[0].wind_deg));
+            // console.log(data.daily[i].humidity);
+            // console.log("--------------------------------");
         }
     })
     })
