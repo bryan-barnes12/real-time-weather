@@ -17,6 +17,24 @@ function parseWind(windDeg) {
     if (337.5 <= windDeg) {return "N"}
 }
 
+function readUvi(uvi) {
+    if (uvi <= 2) {
+        return "#adffdc";
+    }
+    if (2 < uvi <= 5) {
+        return "#ffe799";
+    }
+    if (5 < uvi <= 7) {
+        return "f7bca1";
+    }
+    if (7 < uvi <= 10) {
+        return "#ea9a9d";
+    }
+    if (uvi > 10) {
+        return "#dfa4f4";
+    }
+}
+
 function retrieveHistory() {
     if (!localStorage.getItem('cities')) {
         localStorage.setItem('cities', JSON.stringify(searchHistory));
@@ -90,7 +108,7 @@ function searchLoc() {
         current.append(`<span>Temperature: ${currentTemp}&deg</span><br>`);
         current.append(`<span>Winds: ${currentWind}MPH out of the ${windDirection}</span><br>`);
         current.append(`<span>Humidity: ${currentHumidity}%</span><br>`);
-        current.append(`<span>U/V Index: ${currentUv}</span>`);
+        current.append(`<span>U/V Index: <span class="pill" style="background-color: ${readUvi(currentUv)}">${currentUv}</span></span>`);
         // console.log("Current temp: " + currentTemp);
         // console.log(currentWind + "MPH out of the " + windDirection);
         // console.log(currentHumidity);
@@ -107,7 +125,6 @@ function searchLoc() {
             let dayContainer = $(`#day${i}`)
             let dateString = dayjs.unix(data.daily[i].dt).format('MM/DD/YYYY');
             dayContainer.append(`<h4>${dateString}</span><h4><img src="http://openweathermap.org/img/wn/${data.daily[i].weather[0].icon}.png" alt="${data.daily[i].weather[0].description}">`);
-            dayContainer.append(`<span>${data.daily[i].weather[0].description}</span><br>`);
             dayContainer.append(`<span>Temperature (High/Low): ${data.daily[i].temp.max}&deg/${data.daily[i].temp.min}&deg</span><br>`);
             dayContainer.append(`<span>Winds: ${data.daily[i].wind_speed}MPH</span><br>`);
             dayContainer.append(`<span>Humidity: ${data.daily[i].humidity}%</span>`);

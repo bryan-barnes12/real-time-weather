@@ -20,3 +20,8 @@ body {
 .day {
     border: 1px solid black;
 }
+
+.pill {
+    border-radius: 1em;
+    padding: 5px;
+}
