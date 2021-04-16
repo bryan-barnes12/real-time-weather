@@ -15,13 +15,50 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    background-color: var(--dark);
+}
+
+section {
+    background-color: var(--light);
+    margin: 1em;
+    padding: 1em;
+}
+
+#searchArea {
+    width: 100%;
+}
+
+input {
+    height: 2.5em;
+}
+
+#citySearch button {
+    height: 2.5em;
+}
+
+#history {
+    margin: 0;
+    width: 100%;
+}
+
+.cityHistory {
+    background-color: var(--accent);
+    color: var(--light);
+    height: 2.5em;
+    width: 8em;
+    margin: 2px;
+    border: none;
+    border-radius: 4px;
 }
 
 .day {
     border: 1px solid black;
+    margin: 2em;
+    padding: 2em;
 }
 
 .pill {
     border-radius: 1em;
     padding: 5px;
 }
+
