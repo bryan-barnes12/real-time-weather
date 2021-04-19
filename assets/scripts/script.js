@@ -45,12 +45,19 @@ function retrieveHistory() {
 }
 // Function for creating the history buttons out of local storage.
 function initializeButtons() {
+    $('#history').empty();
     retrieveHistory();
     $("#currentConditions").append('<p id="conditionsContainer">Enter a city name to view current and future weather conditions.</p>')
     for (let i = 0; i < searchHistory.length; i++) {
         let historyArea = $("#history")
         historyArea.append(`<button class="cityHistory" data-value="${searchHistory[i]}">${searchHistory[i]}</button>`)
     }
+    $('#history').children('button').on('click', function (event) {
+        let oldCity = $(event.target).attr('data-value');
+        $("#searchInput").val(oldCity);
+        searchLoc();
+        }
+    );
 }
 initializeButtons();
 // Function for adding buttons to history section and storing them locally.
@@ -62,12 +69,10 @@ function expandHistory(searchCity) {
         }
     }
     if (!duplicate) {
-        let historyArea = $("#history")
-        historyArea.append(`<button class="cityHistory" data-value="${searchCity}">${searchCity}</button>`)
         searchHistory.push(searchCity);
         localStorage.setItem('cities', JSON.stringify(searchHistory));
+        initializeButtons();
     }
-
 }
 // Function for making the API call and dynamically displaying response to the user.
 function searchLoc() {
@@ -124,9 +129,3 @@ $('#searchButton').on('click', function (event) {
     searchLoc();}
 );
 
-$('#history').children('button').on('click', function (event) {
-    let oldCity = $(event.target).attr('data-value');
-    $("#searchInput").val(oldCity);
-    searchLoc();
-    }
-);
