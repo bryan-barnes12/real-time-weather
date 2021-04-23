@@ -78,7 +78,7 @@ function expandHistory(searchCity) {
 function searchLoc() {
     let searchVar;
     searchCity = $("#searchInput").val();
-    searchVar = "http://api.openweathermap.org/data/2.5/weather?q=" + searchCity + "&units=imperial&appid=ecb2b034bde3b7f00daa738ddf58f8c4";
+    searchVar = "https://api.openweathermap.org/data/2.5/weather?q=" + searchCity + "&units=imperial&appid=ecb2b034bde3b7f00daa738ddf58f8c4";
     fetch(searchVar)
     .then(function (response) {
         if (response.ok === false) {console.log("false"); return;}
